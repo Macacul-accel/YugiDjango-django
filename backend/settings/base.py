@@ -45,7 +45,6 @@ INSTALLED_APPS = [
     #third parties
     'rest_framework',
     'django_filters',
-    'djoser',
     'corsheaders',
 ]
 
@@ -104,6 +103,18 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
+    {
+        'NAME': 'users.validators.NumberValidator',
+    },
+    {
+        'NAME': 'users.validators.UpperCaseValidator',
+    },
+    {
+        'NAME': 'users.validators.LowerCaseValidator',
+    },
+    {
+        'NAME': 'users.validators.SpecialCaseValidator',
+    },
 ]
 
 PASSWORD_HASHERS = [
@@ -138,3 +149,9 @@ MEDIA_ROOT = BASE_DIR / 'media/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ],
+}
