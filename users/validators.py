@@ -5,47 +5,34 @@ from django.core.exceptions import ValidationError
 """
 More custom validators so the password contain at least 1 digit, 1 upper, 1 lower and one special character
 """
+    
+class BasePaswordValidator:
+    error_message = ""
+    regex_pattern = ""
 
-class NumberValidator:
     def validate(self, password, user=None):
-        if not re.search('\d', password):
-            raise ValidationError(self.get_error_message(), code='password_no_digit')
-        
-    def get_error_message(self):
-        return "Votre mot de passe ne contient aucun chiffre"
+        if not re.search(self.regex_pattern, password):
+            raise ValidationError(self.error_message, code=self.error_code)
         
     def get_help_text(self):
-        return "Votre mot de passe doit contenir au moins un chiffre"
+        return self.error_message
     
-class UpperCaseValidator:
-    def validate(self, password, user=None):
-        if not re.search('[A-Z]', password):
-            raise ValidationError(self.get_error_message(), code='password_no_upper')
-        
-    def get_error_message(self):
-        return "Votre mot de passe ne contient aucune lettre majuscule"
-        
-    def get_help_text(self):
-        return "Votre mot de passe doit contenir au moins une lettre majuscule"
-    
-class LowerCaseValidator:
-    def validate(self, password, user=None):
-        if not re.search('[a-z]', password):
-            raise ValidationError(self.get_error_message(), code='password_no_lower')
-        
-    def get_error_message(self):
-        return "Votre mot de passe ne contient aucune lettre minuscule"
-        
-    def get_help_text(self):
-        return "Votre mot de passe doit contenir au moins une lettre minuscule"
-    
-class SpecialCaseValidator:
-    def validate(self, password, user=None):
-        if not re.search('[()[\]{}|\\`~!@#$%^&*_\-+=;:\'",<>./?]', password):
-            raise ValidationError(self.get_error_message(), code='password_no_special')
-        
-    def get_error_message(self):
-        return "Votre mot de passe ne contient aucun charactère spéciale"
-        
-    def get_help_text(self):
-        return "Votre mot de passe doit contenir au moins un charactère spéciale"
+class NumberValidator(BasePaswordValidator):
+    error_message = "Votre mot de passe ne contient aucun chiffre"
+    error_code = 400
+    regex_pattern = r'\d'
+
+class UpperCaseValidator(BasePaswordValidator):
+    error_message = "Votre mot de passe ne contient aucune lettre majuscule"
+    error_code = 400
+    regex_pattern = r'[A-Z]'
+
+class LowerCaseValidator(BasePaswordValidator):
+    error_message = "Votre mot de passe ne contient aucune lettre minuscule"
+    error_code = 400
+    regex_pattern = r'[a-z]'
+
+class SpecialCaseValidator(BasePaswordValidator):
+    error_message = "Votre mot de passe ne contient aucun charactère spéciale"
+    error_code = 400
+    regex_pattern = r'[()[\]{}|\\`~!@#$%^&*_\-+=;:\'",<>./?]'

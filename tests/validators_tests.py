@@ -1,10 +1,9 @@
 import pytest
 from rest_framework.test import APIClient
 
-client = APIClient()
 
 @pytest.mark.parametrize(
-        'username, email, password, password2, error_message',
+        'username, email, password, password2, expected_error',
         [
             ('user1', 'test@user.com', 'Validator@', 'Validator@', 'Votre mot de passe ne contient aucun chiffre'),
             ('user2', 'test@user.com', 'validator1@', 'validator1@', 'Votre mot de passe ne contient aucune lettre majuscule'),
@@ -14,15 +13,22 @@ client = APIClient()
         ]
 )
 @pytest.mark.django_db
-def test_custom_password_validator(username, email, password, password2, error_message):
-    response = client.post(
-        '/register',
-        data={
-            'username': username,
-            'email': email,
-            'password': password,
-            'password2': password2,
-        },
-    )
+def test_custom_password_validator(username, email, password, password2, expected_error):
+    client = APIClient()
+    url = '/register/'
+    data = {
+        'username': username,
+        'email': email,
+        'password': password,
+        'password2': password2,
+    }
+    response = client.post(url, data)
+
     assert response.status_code == 400
-    assert response == error_message
+
+    error_messages = []
+
+    if "password" in response.data:
+        error_messages.extend(response.data["password"])
+
+    assert expected_error in error_messages
