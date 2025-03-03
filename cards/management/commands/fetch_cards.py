@@ -1,4 +1,5 @@
 import requests
+import re
 from django.core.management.base import BaseCommand
 from cards.models import Card
 
@@ -39,7 +40,7 @@ class Command(BaseCommand):
                         spell_trap_race = None
 
                     card, created = Card.objects.update_or_create(
-                        name = card_name,
+                        name = re.sub(r"\\", '', card_name),
                         defaults={
                             'type': card_type,
                             'frame_type': card_data.get('frameType'),
@@ -59,7 +60,7 @@ class Command(BaseCommand):
                         self.stdout.write(f"✅ Carte {card_data.get('name')} mise à jour !")
 
                 except Exception as error:
-                    self.stderr.error(f"❌ Erreur dans la récupération de la carte {card_data.get('name')}: {error}", exc_info=True)
+                    self.stderr.write(f"❌ Erreur dans la récupération de la carte {card_data.get('name')}: {error}")
 
         except requests.exceptions.RequestException as error:
             self.stderr.write(f"❌ Erreur dans l'insertion: {error}")

@@ -22,6 +22,7 @@ from django.conf import settings
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('users.urls')),
+    path('', include('cards.urls')),
 ]
 
 if 'drf_spectacular' in settings.INSTALLED_APPS:
@@ -31,4 +32,9 @@ if 'drf_spectacular' in settings.INSTALLED_APPS:
         path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
         path('api/schema/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
         path('api/schema/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
+    ]
+
+if 'silk' in settings.INSTALLED_APPS:
+    urlpatterns += [
+        path('silk/', include('silk.urls', namespace='silk')),
     ]
