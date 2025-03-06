@@ -21,8 +21,8 @@ from django.conf import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('users.urls')),
-    path('', include('cards.urls')),
+    path('api/v2/', include('users.urls')),
+    path('api/v2/', include('cards.urls')),
 ]
 
 if 'drf_spectacular' in settings.INSTALLED_APPS:

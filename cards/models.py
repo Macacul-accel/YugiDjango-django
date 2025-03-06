@@ -37,7 +37,14 @@ class DeckCard(models.Model):
     card = models.ForeignKey(Card, on_delete=models.CASCADE, db_index=True)
     quantity = models.PositiveIntegerField(validators=[MaxValueValidator(3)], default=1)
 
+    # Empêche d'avoir un doublon si la quantité max est atteinte
+    class Meta:
+        unique_together = ('deck', 'card')
+
 class ExtraDeckCard(models.Model):
     deck = models.ForeignKey(Deck, on_delete=models.CASCADE, db_index=True, related_name='extra_cards')
     card = models.ForeignKey(Card, on_delete=models.CASCADE, db_index=True)
     quantity = models.PositiveIntegerField(validators=[MaxValueValidator(3)], default=1)
+
+    class Meta:
+        unique_together = ('deck', 'card')

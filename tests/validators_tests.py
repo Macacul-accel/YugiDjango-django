@@ -15,7 +15,7 @@ from rest_framework.test import APIClient
 @pytest.mark.django_db
 def test_custom_password_validator(username, email, password, password2, expected_error):
     client = APIClient()
-    url = '/register/'
+    url = '/api/v2/register/'
     data = {
         'username': username,
         'email': email,

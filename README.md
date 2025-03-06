@@ -1,53 +1,32 @@
 # Yugi-Django
 
-## Description
-Étant un passionné du jeu de cartes Yu-Gi-Oh!, je voulais avoir à ma disposition toutes les cartes sorties depuis le lancement du jeu, avec des filtres personnalisés.
-Pouvoir partager avec la communauté de joueurs les decks crées par chacun.
+## Nouvelle version
+V2 de l'appli:
 
-## Outils utilisés
--   API: https://ygoprodeck.com/api-guide/
--   Django: v5.1.6
--   Vue.JS: v3.5.13
--   Bootstrap5
+https://github.com/Macacul-accel/Dashboard.git
 
-## 
+Dans cette nouvelle version, passage vers DRF.
+Optimisation des queries (defer pour les champs 'effect' et 'image') pour une réponse plus rapide.
+Simplification de l'authentification pour ne pas embêter l'utilisateur à confirmer son adresse mail.
 
-## Installation
-1. **Cloner le repo**
-    ```bash
-    git clone https://github.com/Macacul-accel/Dashboard.git
-    cd Dashboard/backend
-    ```
+## Changements apportés
+1. **Passage vers DRF**
+Transformation en API, ajout des serializers.
 
-2. **Activer l'environnement virtuel (Optionnel)**
-    ```bash
-    python3.12 -m venv .env
-    source .env/bin/activate  # Sur Windows: `.env\Scripts\activate`
-    ```
+2. **Optimisation des query**
+Indexation pour une réponse plus rapide de la base de données.
+Ajout de defer au query de CardList pour un rendu plus rapide. Les champs 'effect' et 'image' chargeront au fur et à mesur sans impacter la performance de l'API.
 
-3. **Installer les packages nécessaires**
-    ```bash
-    pip install -r requirements.txt
-    ```
+3. **Refactorisation**
+Réécriture du FilterSet pour une meilleure lisibilité. 
+Simplification des views, plus besoin de formater manuellement les données en JSON.
+Des class plus claires et un code plus maintenable.
 
-4. **Activer la base de données**
-    ```bash
-    python manage.py migrate
-    ```
+4. **Simplification de l'authentification**
+Plus besoin de confirmer son mail pour devenir utilisateur et construire ses decks.
+Une simple inscription avec un nom d'utilisateur et un mot de passe.
 
-5. **Récupérer les données de l'API (!Les images occupent beaucoup d'espaces!)**
-    ```bash
-    python manage.py fecth_cards # Récupére les données de toutes les cartes qui ne sont pas dans la bdd
-    ```
-    Lorsque la récupération des données est terminée
-    ```bash
-    python manage.py fetch_images # Modifiez le fichier et choisissez l'option 2 pour éviter d'occuper trop d'espace
-    ```
+5. **Complexification du mot de passe**
+Ajout de validators qui forcent l'utilisateur à avoir un mot de passe plus robuste (une lettre minuscule, une lettre majuscule, un chiffre et un charactère spécial, avec une longueur de 8 charactères minimum).
 
-6. **Lancer le serveur**
-    ```bash
-    python manage.py runserver
-    ```
-
-7. **Accès au site**
-    Ouvrez votre navigateur et rentrez dans la barre de recherche: `http://127.0.0.1:8000/`.
+## Profiter et explorer !
