@@ -5,6 +5,19 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from rest_framework import serializers
 
 class CardSerializer(serializers.ModelSerializer):
+    is_extra = serializers.SerializerMethodField()
+
+    def get_is_extra(self, obj):
+        return obj.frame_type in [
+            'synchro',
+            'synchro_pendulum',
+            'fusion',
+            'fusion_pendulum',
+            'xyz',
+            'xyz_pendulum',
+            'link',
+        ]
+
     class Meta:
         model = Card
         fields = '__all__'
@@ -57,8 +70,8 @@ class DeckSerializer(serializers.ModelSerializer):
         main_deck_data = data.get('main_cards', [])
         extra_deck_data = data.get('extra_cards', [])
 
-        main_deck_total = sum(main_card_data['quantity'] for main_card_data in main_deck_data)
-        extra_deck_total = sum(extra_card_data['quantity'] for extra_card_data in extra_deck_data)
+        main_deck_total = sum(main_card_data.get('quantity', 0) for main_card_data in main_deck_data)
+        extra_deck_total = sum(extra_card_data.get('quantity', 0) for extra_card_data in extra_deck_data)
 
         if main_deck_total > 60:
             raise serializers.ValidationError("Un deck ne peut pas contenir plus de 60 cartes.")
@@ -85,13 +98,27 @@ class DeckSerializer(serializers.ModelSerializer):
         main_cards_data = validated_data.pop('main_cards', [])
         extra_cards_data = validated_data.pop('extra_cards', [])
 
-        instance.main_cards.all().delete()
-        instance.extra_cards.all().delete()
+        # Récupération des données des cartes pour mettre à jour la quantité ou encore retirer/ajouter au deck
+        existing_main_cards = {card.card_id: card for card in instance.main_cards.all()}
+        new_main_cards = {card_data['card'].id: card_data for card_data in main_cards_data}
 
-        for main_card_data in main_cards_data:
-            DeckCard.objects.update_or_create(deck=instance, **main_card_data)
+        # Suppression des cartes qui ne sont plus dans la liste
+        for removed_card in existing_main_cards:
+            if removed_card not in new_main_cards:
+                existing_main_cards[removed_card].delete()
+        
+        # Mis à jour de la quantité, ou création de l'instance pour les nouvelles cartes
+        for card_id, card_data in new_main_cards.items():
+            DeckCard.objects.update_or_create(deck=instance, card_id=card_id, defaults=card_data)
 
-        for extra_card_data in extra_cards_data:
-            ExtraDeckCard.objects.update_or_create(deck=instance, **extra_card_data)
+        existing_extra_cards = {card.card_id: card for card in instance.extra_cards.all()}
+        new_extra_cards = {card_data['card'].id: card_data for card_data in extra_cards_data}
+        
+        for removed_card in existing_extra_cards:
+            if removed_card not in new_extra_cards:
+                existing_extra_cards[removed_card].delete()
+
+        for card_id, card_data in new_extra_cards.items():
+            DeckCard.objects.update_or_create(deck=instance, card_id=card_id, defaults=card_data)
 
         return instance
