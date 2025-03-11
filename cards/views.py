@@ -12,6 +12,12 @@ from .filters import CardFilter
 from .models import Card, Deck
 from .serializers import CardSerializer, DeckSerializer
 
+class CustomPagination(PageNumberPagination):
+    page_size = 20
+    page_query_param = 'page'
+    page_size_query_param = 'page_size'
+    max_page_size = 100
+
 """
 Retourne la liste de toutes les cartes, et mis en place des différents filtres
 """
@@ -24,11 +30,7 @@ class CardsList(ListAPIView):
         filters.SearchFilter,
         ]
     search_fields = ['name']
-    pagination_class = PageNumberPagination
-    pagination_class.page_size = 20
-    pagination_class.page_query_param = 'page_num'
-    pagination_class.page_size_query_param = 'page_size'
-    pagination_class.max_page_size = 100
+    pagination_class = CustomPagination
     permission_classes = [AllowAny]
 
     #cache for 10 minutes
@@ -46,9 +48,7 @@ class DeckViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     pagination_class = PageNumberPagination
     pagination_class.page_size = 20
-    pagination_class.page_query_param = 'page_num'
-    pagination_class.page_size_query_param = 'page_size'
-    pagination_class.max_page_size = 20
+    pagination_class.page_query_param = 'page'
 
     def get_queryset(self):
         qs = super().get_queryset()

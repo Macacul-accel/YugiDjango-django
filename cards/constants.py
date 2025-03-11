@@ -20,7 +20,7 @@ FRAME_TYPE_MAPPING = {
         'normal_pendulum',
         'ritual',
     ],
-    'extra-deck': [
+    'extradeck': [
         'synchro',
         'synchro_pendulum',
         'fusion',

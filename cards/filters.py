@@ -22,8 +22,16 @@ class CardFilter(FilterSet):
     """
     Les variables *_CHOCIES sont dans le fichier 'constant.py'
     """
-    type = ChoiceFilter(choices=MONSTER_TYPE_CHOICES, field_name='monster_type')
-    frame_type = ChoiceFilter(choices=FRAME_TYPE_CHOICES, field_name='card_type')
+    type = ChoiceFilter(
+        choices=MONSTER_TYPE_CHOICES,
+        field_name='type',
+        method='filter_by_monster_type',
+    )
+    frame_type = ChoiceFilter(
+        choices=FRAME_TYPE_CHOICES,
+        field_name='frame_type',
+        method='filter_by_frametype',
+    )
     min_attack = NumberFilter(field_name='attack', lookup_expr='gte')
     max_attack = NumberFilter(field_name='attack', lookup_expr='lte')
     min_defense = NumberFilter(field_name='defense', lookup_expr='gte')
