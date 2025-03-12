@@ -22,7 +22,7 @@ class CustomPagination(PageNumberPagination):
 Retourne la liste de toutes les cartes, et mis en place des différents filtres
 """
 class CardsList(ListAPIView):
-    queryset = Card.objects.defer('effect', 'image').all().order_by('id')
+    queryset = Card.objects.defer('effect', 'image_url').all().order_by('id')
     serializer_class = CardSerializer
     filterset_class = CardFilter
     filter_backends = [

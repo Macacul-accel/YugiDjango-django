@@ -52,6 +52,7 @@ class Command(BaseCommand):
                             'monster_race': monster_race,
                             'attribute': card_data.get('attribute'),
                             'archetype': card_data.get('archetype'),
+                            'image_url': card_data.get('card_images')[0]['image_url'],
                         },
                     )
                     if created:

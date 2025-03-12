@@ -14,7 +14,7 @@ class Card(models.Model):
     monster_race = models.CharField(max_length=30, db_index=True, null=True)
     attribute = models.CharField(max_length=10, db_index=True, null=True)
     archetype = models.CharField(max_length=50, db_index=True, null=True)
-    image = models.ImageField(upload_to='card_images/', null=False, default='card_images/default.jpg')
+    image_url = models.URLField(null=True, db_index=True)
 
     def __str__(self):
         return self.name
