@@ -10,6 +10,7 @@ cryptography==44.0.1
 defusedxml==0.7.1
 Django==5.1.6
 django-cors-headers==4.7.0
+dj-database-url==2.3.0
 django-extensions==3.2.3
 django-filter==25.1
 django-paginator==0.2a3

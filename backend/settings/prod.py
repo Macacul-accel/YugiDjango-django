@@ -13,9 +13,18 @@ CORS_ALLOWED_ORIGINS = config('CORS_ALLOWED_ORIGINS', cast=Csv())
 CACHES = {
     'default': {
         'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION': 'redis://127.0.0.1:6379/1',  # Redis server
+        'LOCATION': config('REDIS_SERVER'),
         'OPTIONS': {
             'CLIENT_CLASS': 'django_redis.client.DefaultClient',
         },
     }
+}
+
+import dj_database_url
+
+DATABASES = {
+    'default': dj_database_url.config(
+        default=config('DB_URL'),
+        conn_max_age=500,
+    )
 }
