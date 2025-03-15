@@ -24,24 +24,26 @@ class CardSerializer(serializers.ModelSerializer):
 
 class DeckCardSerializer(serializers.ModelSerializer):
     card_name = serializers.CharField(source='card.name', read_only=True)
-    card = serializers.PrimaryKeyRelatedField(queryset=Card.objects.all())
+    card_image_url = serializers.URLField(source='card.image_url', read_only=True)
+    id = serializers.PrimaryKeyRelatedField(source='card', queryset=Card.objects.all())
     quantity = serializers.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(3)])
 
     class Meta:
         model = DeckCard
         fields = (
-            'card_name', 'card', 'quantity',
+            'card_name', 'card_image_url', 'id', 'quantity',
         )
 
 class ExtraDeckCardSerializer(serializers.ModelSerializer):
     card_name = serializers.CharField(source='card.name', read_only=True)
-    card = serializers.PrimaryKeyRelatedField(queryset=Card.objects.all())
+    card_image_url = serializers.URLField(source='card.image_url', read_only=True)
+    id = serializers.PrimaryKeyRelatedField(source='card', queryset=Card.objects.all())
     quantity = serializers.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(3)])
 
     class Meta:
         model = ExtraDeckCard
         fields = (
-            'card_name', 'card', 'quantity',
+            'card_name', 'card_image_url', 'id', 'quantity',
         )
 
 class DeckSerializer(serializers.ModelSerializer):
@@ -95,6 +97,10 @@ class DeckSerializer(serializers.ModelSerializer):
         return deck
     
     def update(self, instance, validated_data):
+        # Update the deck name
+        instance.name = validated_data.get('name', instance.name)
+        instance.save()
+
         main_cards_data = validated_data.pop('main_cards', [])
         extra_cards_data = validated_data.pop('extra_cards', [])
 
@@ -119,6 +125,6 @@ class DeckSerializer(serializers.ModelSerializer):
                 existing_extra_cards[removed_card].delete()
 
         for card_id, card_data in new_extra_cards.items():
-            DeckCard.objects.update_or_create(deck=instance, card_id=card_id, defaults=card_data)
+            ExtraDeckCard.objects.update_or_create(deck=instance, card_id=card_id, defaults=card_data)
 
         return instance
